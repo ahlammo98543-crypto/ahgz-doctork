@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="360" viewBox="0 0 1200 360" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="احجز دكتورك | Book Your Doctor">
+  <!-- خلفية شفافة -->
+  <rect width="1200" height="360" fill="transparent"/>
+
+  <!-- أيقونة سماعة (رمز بسيط وأنيق) -->
+  <g transform="translate(40,40)">
+    <!-- حلقة الدائرة -->
+    <circle cx="56" cy="56" r="48" fill="#E9F6FF"/>
+    <!-- جسم السماعة -->
+    <path d="M56 16 C72 16 84 28 84 44 L84 120 C84 148 108 168 132 164 C156 160 176 136 176 112" stroke="#0077B6" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <!-- رأس السماعة -->
+    <circle cx="176" cy="112" r="18" fill="#0077B6"/>
+    <!-- خط مرن -->
+    <path d="M56 104 C40 120 36 150 56 180" stroke="#0077B6" stroke-width="6" stroke-linecap="round" fill="none"/>
+  </g>
+
+  <!-- النص العربي (رئيسي) -->
+  <g transform="translate(240,115)">
+    <text x="0" y="0" font-family="Cairo, system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Naskh Arabic', Arial" font-weight="800" font-size="64" fill="#073b4c">احجز دكتورك</text>
+    <text x="0" y="68" font-family="Cairo, system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Naskh Arabic', Arial" font-weight="600" font-size="22" fill="#1f6f8b">Book Your Doctor</text>
+  </g>
+</svg>

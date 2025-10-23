@@ -1,0 +1,153 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>احجز دكتورك – Book Your Doctor</title>
+  <meta name="description" content="موقع احجز دكتورك يساعدك على العثور على أفضل الأطباء بسهولة وحجز المواعيد أونلاين.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <style>
+    /* تنسيق شريط العنوان */
+    .topbar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #0077b6;
+      color: #fff;
+      padding: 25px 20px;
+      border-bottom: 4px solid #005f8a;
+    }
+
+    /* تنسيق المنطقة اللي فيها اللوجو والعناوين */
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    /* اللوجو SVG */
+    .site-logo {
+      width: 90px;
+      height: auto;
+    }
+
+    /* العنوان الرئيسي */
+    .site-title {
+      font-size: 3rem;
+      font-weight: 800;
+      margin: 0;
+      color: #ffffff;
+      display: block;
+    }
+
+    /* العنوان الفرعي */
+    .site-subtitle {
+      display: block;
+      font-size: 1.3rem;
+      color: #d8f3ff;
+      margin-top: 6px;
+      font-weight: 500;
+    }
+
+    /* مدخلات البحث */
+    .controls {
+      text-align: center;
+      margin: 30px 0;
+    }
+
+    .controls input, .controls select {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin: 5px;
+      font-size: 1rem;
+    }
+
+    .ghost {
+      background: #0077b6;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .ghost:hover {
+      background: #005f8a;
+    }
+
+    footer {
+      background: #f2f2f2;
+      text-align: center;
+      padding: 15px;
+      margin-top: 40px;
+      font-size: 0.9rem;
+    }
+
+    .muted {
+      color: #666;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <!-- اللوجو SVG -->
+      <img src="logo.svg" alt="احجز دكتورك" class="site-logo">
+      <div>
+        <h1 class="site-title">احجز دكتورك</h1>
+        <small class="site-subtitle">Book Your Doctor</small>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="controls">
+      <input id="searchInput" placeholder="ابحث عن اسم، تخصص أو منطقة... / Search name, specialty or area..." />
+      <select id="specialtyFilter"><option value="">— كل التخصصات —</option></select>
+      <select id="areaFilter"><option value="">— كل المناطق —</option></select>
+      <button id="addDemo" class="ghost" title="add demo">Demo</button>
+    </section>
+
+    <section id="doctorGrid" class="doctor-grid" aria-live="polite"></section>
+  </main>
+
+  <!-- نافذة الحجز -->
+  <div class="modal" id="bookingModal" aria-hidden="true">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+      <button class="close-x" id="closeBooking">✕</button>
+      <h2 id="bookingTitle">احجز موعدك</h2>
+
+      <div class="form-row">
+        <input id="patientName" placeholder="اسمك / Name" />
+        <input id="patientPhone" placeholder="رقم الهاتف / Phone" />
+      </div>
+
+      <div class="form-row">
+        <input id="appointmentDate" type="date" />
+        <select id="appointmentTime"></select>
+      </div>
+
+      <div class="form-row">
+        <button id="confirmBookingBtn" class="btn">تأكيد الحجز / Confirm</button>
+        <button id="cancelBooking" class="btn ghost">إلغاء / Cancel</button>
+      </div>
+
+      <div id="bookingNotice" class="muted"></div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div>© <span id="year"></span> احجز دكتورك | Book Your Doctor</div>
+    <div class="muted">Offline demo — البيانات محفوظة محليًا</div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

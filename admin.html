@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>لوحة الإدارة — Admin</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { font-family: "Cairo", sans-serif; background-color: #f5f7fa; margin:0; color:#222; }
+    .login-screen { display:flex; justify-content:center; align-items:center; height:100vh; flex-direction:column; background:linear-gradient(135deg,#007bff,#004aad); color:white; text-align:center; }
+    .login-screen input { padding:10px; border-radius:8px; width:260px; margin-top:12px; }
+    .login-screen button { background:white; color:#004aad; padding:10px 18px; border-radius:8px; margin-top:12px; border:none; font-weight:700; cursor:pointer; }
+    .topbar { background:#004aad; color:white; display:flex; justify-content:space-between; align-items:center; padding:15px 20px; }
+    .topbar .logout { background:white; color:#004aad; padding:8px 14px; border-radius:8px; border:none; cursor:pointer; font-weight:700; }
+    .container{max-width:1100px;margin:20px auto;padding:0 16px}
+    .admin-grid{display:grid;grid-template-columns:1fr;gap:16px}
+    .card{background:#fff;padding:14px;border-radius:12px;box-shadow:0 10px 30px rgba(11,82,150,0.06)}
+    .form-row{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+    input[type="text"], input[type="number"]{padding:8px;border-radius:8px;border:1px solid #e6eefc;flex:1}
+    table{width:100%;border-collapse:collapse;margin-top:8px}
+    table th, table td{padding:8px;border-bottom:1px solid #f1f5f9;text-align:right}
+    .muted{color:#667085;font-size:13px}
+  </style>
+</head>
+<body>
+  <div class="login-screen" id="loginScreen">
+    <h2>🔒 دخول لوحة الإدارة</h2>
+    <input type="password" id="adminPassword" placeholder="أدخل كلمة المرور">
+    <button id="loginBtn">دخول</button>
+    <p id="loginError" style="color:yellow;margin-top:10px"></p>
+  </div>
+
+  <div id="adminPanel" style="display:none;">
+    <header class="topbar">
+      <h1>لوحة الإدارة</h1>
+      <button class="logout" id="logoutBtn">تسجيل الخروج</button>
+    </header>
+
+    <main class="container admin-grid">
+      <section class="card admin-card">
+        <h3>إضافة / تعديل طبيب</h3>
+
+        <div class="form-row">
+          <input id="docName" placeholder="اسم الدكتور">
+          <input id="docSpecialty" placeholder="التخصص">
+        </div>
+
+        <div class="form-row">
+          <input id="docArea" placeholder="المنطقة / العنوان">
+          <input id="docPrice" type="number" placeholder="سعر الكشف">
+        </div>
+
+        <div class="form-row">
+          <input id="docImg" placeholder="رابط الصورة (اختياري)">
+          <input id="docSchedule" placeholder="المواعيد (مثال: 09:00,10:00 أو: الأحد والثلاثاء 5-9)">
+        </div>
+
+        <div class="form-row">
+          <button id="saveDoctor" class="btn">💾 حفظ</button>
+          <button id="clearForm" class="btn ghost">🧹 مسح</button>
+        </div>
+      </section>
+
+      <section class="card admin-card">
+        <h3>قائمة الأطباء</h3>
+        <div id="doctorsList" class="list"></div>
+      </section>
+
+      <section class="card admin-card">
+        <h3>حجوزات المرضى</h3>
+        <div id="bookingsList" class="list"></div>
+        <div class="muted">البيانات محفوظة محليًا (localStorage).</div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      © <span id="yearAdmin"></span> Admin
+    </footer>
+  </div>
+
+  <script>
+    const correctPassword = "Ahlammohamed2003";
+    const loginScreen = document.getElementById("loginScreen");
+    const adminPanel = document.getElementById("adminPanel");
+    const loginBtn = document.getElementById("loginBtn");
+    const passwordInput = document.getElementById("adminPassword");
+    const errorMsg = document.getElementById("loginError");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    if (localStorage.getItem("adminLoggedIn") === "true") {
+      loginScreen.style.display = "none";
+      adminPanel.style.display = "block";
+    }
+
+    loginBtn.addEventListener("click", () => {
+      const enteredPassword = passwordInput.value.trim();
+      if (enteredPassword === correctPassword) {
+        localStorage.setItem("adminLoggedIn", "true");
+        loginScreen.style.display = "none";
+        adminPanel.style.display = "block";
+      } else {
+        errorMsg.textContent = "❌ كلمة المرور غير صحيحة";
+      }
+    });
+
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem("adminLoggedIn");
+      location.reload();
+    });
+
+    document.getElementById("yearAdmin").textContent = new Date().getFullYear();
+  </script>
+
+  <script src="script.js"></script>
+</body>
+</html>
