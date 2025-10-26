@@ -1,4 +1,11 @@
-﻿// script.js — works for both pages (index & admin)
+// ✅ حذف البيانات القديمة من التخزين المحلي عند تحديث الموقع
+const siteVersion = "v2.0"; // عدّلي هُنا لو عملتِ تحديث جديد لاحقًا
+if (localStorage.getItem("siteVersion") !== siteVersion) {
+  localStorage.clear();
+  localStorage.setItem("siteVersion", siteVersion);
+  console.log("تم مسح البيانات القديمة ✅");
+}
+// script.js — works for both pages (index & admin)
 (() => {
   const isAdminPage = location.pathname.endsWith('admin.html') || location.search.includes('admin=true');
 
@@ -378,5 +385,6 @@
     // small utility
     function uid(){ return Date.now() + Math.floor(Math.random()*999); }
   }
+
 
 })();
