@@ -17,14 +17,19 @@ if (localStorage.getItem("siteVersion") !== siteVersion) {
   function read(key){ try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch(e){ return null; } }
   function write(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
 
-  function seedIfEmpty(){
-    let docs = read(LS_KEYS.DOCTORS);
-    if(!docs){
+  async function seedIfEmpty(){
+  let docs = read(LS_KEYS.DOCTORS);
+  if(!docs){
+    try {
+      const res = await fetch('doctors.json');
+      docs = await res.json();
+    } catch(e){
       docs = [];
-      write(LS_KEYS.DOCTORS, docs);
-      write(LS_KEYS.BOOKS, []);
     }
+    write(LS_KEYS.DOCTORS, docs);
+    write(LS_KEYS.BOOKS, []);
   }
+}
   seedIfEmpty();
 
   /* -------------------------
@@ -384,4 +389,5 @@ if (localStorage.getItem("siteVersion") !== siteVersion) {
 
 
 })();
+
 
