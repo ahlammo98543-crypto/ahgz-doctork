@@ -20,11 +20,7 @@ if (localStorage.getItem("siteVersion") !== siteVersion) {
   function seedIfEmpty(){
     let docs = read(LS_KEYS.DOCTORS);
     if(!docs){
-      docs = [
-        {id:1,name:"د. أحمد سعيد / Dr. Ahmed Said",specialty:"قلب / Cardiology",address:"6 أكتوبر",schedule:["09:00","10:00","11:00"],price:500,img:"https://via.placeholder.com/800x600?text=Dr+Ahmed",bio:"استشاري قلب."},
-        {id:2,name:"د. منى محمد / Dr. Mona Mohamed",specialty:"أسنان / Dentistry",address:"الهرم",schedule:["09:30","10:30"],price:300,img:"https://via.placeholder.com/800x600?text=Dr+Mona",bio:"دكتورة أسنان."},
-        {id:3,name:"د. علي محمود / Dr. Ali Mahmoud",specialty:"باطنة / Internal Medicine",address:"مدينة نصر",schedule:["11:00","12:00"],price:400,img:"https://via.placeholder.com/800x600?text=Dr+Ali",bio:"استشاري باطنة."}
-      ];
+      docs = [];
       write(LS_KEYS.DOCTORS, docs);
       write(LS_KEYS.BOOKS, []);
     }
@@ -388,3 +384,4 @@ if (localStorage.getItem("siteVersion") !== siteVersion) {
 
 
 })();
+
