@@ -1,163 +1,146 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>لوحة التحكم - الأطباء</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة التحكم - إدارة الدكاترة</title>
   <style>
     body {
       font-family: "Cairo", sans-serif;
-      background-color: #f5f5f5;
-      text-align: center;
-      margin: 0;
+      background-color: #f8f9fa;
+      direction: rtl;
       padding: 20px;
     }
     h1 {
-      color: #333;
+      text-align: center;
+      color: #007bff;
     }
     form {
       background-color: white;
       padding: 20px;
-      margin: 20px auto;
       border-radius: 10px;
-      width: 90%;
-      max-width: 400px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 600px;
+      margin: 20px auto;
     }
-    input {
-      width: 90%;
+    input, textarea, button {
+      width: 100%;
       padding: 10px;
-      margin: 10px 0;
-      border: 1px solid #ccc;
+      margin: 8px 0;
       border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 16px;
     }
     button {
       background-color: #007bff;
       color: white;
-      padding: 10px 20px;
       border: none;
-      border-radius: 5px;
       cursor: pointer;
+      transition: 0.3s;
     }
     button:hover {
       background-color: #0056b3;
     }
     .doctor-list {
-      background-color: white;
-      margin-top: 20px;
-      padding: 15px;
+      max-width: 700px;
+      margin: 20px auto;
+      background: white;
       border-radius: 10px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     .doctor-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px;
       border-bottom: 1px solid #eee;
+      padding: 10px 0;
     }
     .doctor-item:last-child {
       border-bottom: none;
     }
-    .delete-btn {
-      background-color: red;
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
   </style>
 </head>
 <body>
+  <h1>🩺 إدارة الأطباء</h1>
 
-  <h1>لوحة التحكم - إدارة الأطباء</h1>
-
-  <form id="addDoctorForm">
-    <input type="text" id="doctorName" placeholder="اسم الطبيب" required>
-    <input type="text" id="specialty" placeholder="التخصص" required>
-    <input type="text" id="phone" placeholder="رقم الهاتف" required>
+  <form id="doctorForm">
+    <input type="text" id="name" placeholder="اسم الطبيب" required />
+    <input type="text" id="specialty" placeholder="تخصص الطبيب" required />
+    <input type="number" id="price" placeholder="سعر الكشف" required />
+    <textarea id="description" placeholder="نبذة عن الطبيب" required></textarea>
+    <input type="tel" id="phone" placeholder="رقم الهاتف" required />
+    <input type="text" id="days" placeholder="أيام العمل (مثلاً: السبت - الاثنين - الأربعاء)" required />
     <button type="submit">إضافة الطبيب</button>
   </form>
 
-  <div class="doctor-list" id="doctorList"></div>
+  <div class="doctor-list" id="doctorList">
+    <h3>📋 قائمة الأطباء</h3>
+    <div id="list"></div>
+  </div>
 
-  <script type="module" src="script.js"></script>
-  <!-- Firebase -->
-<script type="module">
-  // Import Firebase
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+  <script type="module">
+    // إعداد Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  // إعداد Firebase الخاص بمشروعك
-  const firebaseConfig = {
-    apiKey: "AIzaSyDgxnMz1IyXQ9hn9VXKJpPGLf75JUNeIYs",
-    authDomain: "doctor-booking-system-336f6.firebaseapp.com",
-    projectId: "doctor-booking-system-336f6",
-    storageBucket: "doctor-booking-system-336f6.firebasestorage.app",
-    messagingSenderId: "996057125969",
-    appId: "1:996057125969:web:332550171352c0950ad470",
-  };
+    const firebaseConfig = {
+      apiKey: "AIzaSyDgxnMz1IyXQ9hn9VXKJpPGLf75JUNeIYs",
+      authDomain: "doctor-booking-system-336f6.firebaseapp.com",
+      projectId: "doctor-booking-system-336f6",
+      storageBucket: "doctor-booking-system-336f6.firebasestorage.app",
+      messagingSenderId: "996057125969",
+      appId: "1:996057125969:web:332550171352c0950ad470"
+    };
 
-  // نبدأ الاتصال بفايربيز
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-  // العناصر
-  const saveBtn = document.getElementById("saveDoctor");
-  const list = document.getElementById("doctorsList");
+    const form = document.getElementById("doctorForm");
+    const listContainer = document.getElementById("list");
 
-  // عند حفظ الطبيب
-  saveBtn.addEventListener("click", async () => {
-    const name = document.getElementById("docName").value;
-    const specialty = document.getElementById("docSpecialty").value;
-    const area = document.getElementById("docArea").value;
-    const price = document.getElementById("docPrice").value;
-    const img = document.getElementById("docImg").value;
-    const schedule = document.getElementById("docSchedule").value;
+    // إضافة طبيب جديد
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = form.name.value;
+      const specialty = form.specialty.value;
+      const price = form.price.value;
+      const description = form.description.value;
+      const phone = form.phone.value;
+      const days = form.days.value;
 
-    if (!name || !specialty) {
-      alert("يرجى إدخال اسم الطبيب والتخصص ✏️");
-      return;
+      await addDoc(collection(db, "doctors"), {
+        name, specialty, price, description, phone, days
+      });
+
+      form.reset();
+      loadDoctors();
+    });
+
+    // تحميل الأطباء
+    async function loadDoctors() {
+      listContainer.innerHTML = "";
+      const querySnapshot = await getDocs(collection(db, "doctors"));
+      querySnapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const div = document.createElement("div");
+        div.className = "doctor-item";
+        div.innerHTML = `
+          <strong>${data.name}</strong> - ${data.specialty}<br>
+          💵 ${data.price} جنيه<br>
+          📞 ${data.phone}<br>
+          🗓️ ${data.days}<br>
+          📝 ${data.description}<br>
+          <button onclick="deleteDoctor('${docSnap.id}')">🗑️ حذف</button>
+        `;
+        listContainer.appendChild(div);
+      });
     }
 
-    await addDoc(collection(db, "doctors"), {
-      name,
-      specialty,
-      area,
-      price,
-      img,
-      schedule,
-    });
+    // حذف طبيب
+    window.deleteDoctor = async (id) => {
+      await deleteDoc(doc(db, "doctors", id));
+      loadDoctors();
+    };
 
-    alert("✅ تم إضافة الطبيب بنجاح!");
     loadDoctors();
-  });
-
-  // تحميل الأطباء من فايربيز
-  async function loadDoctors() {
-    list.innerHTML = "";
-    const querySnapshot = await getDocs(collection(db, "doctors"));
-    querySnapshot.forEach((docSnap) => {
-      const data = docSnap.data();
-      const div = document.createElement("div");
-      div.classList.add("doctor-item");
-      div.innerHTML = `
-        <p><strong>${data.name}</strong> - ${data.specialty}</p>
-        <button onclick="deleteDoctor('${docSnap.id}')">🗑️ حذف</button>
-      `;
-      list.appendChild(div);
-    });
-  }
-
-  // حذف الطبيب
-  window.deleteDoctor = async (id) => {
-    await deleteDoc(doc(db, "doctors", id));
-    alert("🗑️ تم حذف الطبيب");
-    loadDoctors();
-  };
-
-  loadDoctors();
-</script>
+  </script>
 </body>
 </html>
-
