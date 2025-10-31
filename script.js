@@ -15,6 +15,59 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+// مرجع إلى مجموعة الأطباء في Firebase
+const doctorsCollection = collection(db, "doctors");
+
+// إضافة طبيب جديد
+document.getElementById("addDoctorForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const name = document.getElementById("doctorName").value;
+  const specialty = document.getElementById("specialty").value;
+  const phone = document.getElementById("phone").value;
+
+  await addDoc(doctorsCollection, {
+    name: name,
+    specialty: specialty,
+    phone: phone
+  });
+
+  alert("تمت إضافة الطبيب بنجاح ✅");
+
+  // إعادة تحميل الأطباء
+  loadDoctors();
+});
+
+// تحميل الأطباء وعرضهم
+async function loadDoctors() {
+  const list = document.getElementById("doctorList");
+  list.innerHTML = "";
+
+  const querySnapshot = await getDocs(doctorsCollection);
+  querySnapshot.forEach((docItem) => {
+    const data = docItem.data();
+    const div = document.createElement("div");
+    div.className = "doctor-item";
+    div.innerHTML = `
+      <span>${data.name} - ${data.specialty} - ${data.phone}</span>
+      <button class="delete-btn" data-id="${docItem.id}">حذف</button>
+    `;
+    list.appendChild(div);
+  });
+
+  // إضافة حدث الحذف لكل زر
+  document.querySelectorAll(".delete-btn").forEach(btn => {
+    btn.addEventListener("click", async (e) => {
+      const id = e.target.getAttribute("data-id");
+      await deleteDoc(doc(db, "doctors", id));
+      alert("تم حذف الطبيب ❌");
+      loadDoctors();
+    });
+  });
+}
+
+// تحميل الأطباء عند تشغيل الصفحة
+loadDoctors();
 // ✅ حذف البيانات القديمة من التخزين المحلي عند تحديث الموقع
 const siteVersion = "v2.0"; // عدّلي هُنا لو عملتِ تحديث جديد لاحقًا
 if (localStorage.getItem("siteVersion") !== siteVersion) {
@@ -406,6 +459,7 @@ if (localStorage.getItem("siteVersion") !== siteVersion) {
 
 
 })();
+
 
 
 
