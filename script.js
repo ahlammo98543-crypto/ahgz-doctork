@@ -1,3 +1,20 @@
+// Firebase Setup
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDgxnMz1IyXQ9hn9VXKJpPGLf75JUNeIYs",
+  authDomain: "doctor-booking-system-336f6.firebaseapp.com",
+  projectId: "doctor-booking-system-336f6",
+  storageBucket: "doctor-booking-system-336f6.firebasestorage.app",
+  messagingSenderId: "996057125969",
+  appId: "1:996057125969:web:332550171352c0950ad470",
+  measurementId: "G-KPV38B57Y3"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 // ✅ حذف البيانات القديمة من التخزين المحلي عند تحديث الموقع
 const siteVersion = "v2.0"; // عدّلي هُنا لو عملتِ تحديث جديد لاحقًا
 if (localStorage.getItem("siteVersion") !== siteVersion) {
@@ -389,6 +406,7 @@ if (localStorage.getItem("siteVersion") !== siteVersion) {
 
 
 })();
+
 
 
 
