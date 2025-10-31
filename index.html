@@ -1,157 +1,108 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>احجز دكتورك – Book Your Doctor</title>
-  <meta name="description" content="موقع احجز دكتورك يساعدك على العثور على أفضل الأطباء بسهولة وحجز المواعيد أونلاين.">
-  <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>احجز دكتورك</title>
   <style>
-    /* تنسيق شريط العنوان */
-    .topbar {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #0077b6;
-      color: #fff;
-      padding: 25px 20px;
-      border-bottom: 4px solid #005f8a;
-    }
-
-    /* تنسيق المنطقة اللي فيها اللوجو والعناوين */
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-    }
-
-    /* اللوجو SVG */
-    .site-logo {
-      width: 90px;
-      height: auto;
-    }
-
-    /* العنوان الرئيسي */
-    .site-title {
-      font-size: 3rem;
-      font-weight: 800;
+    body {
+      font-family: "Cairo", sans-serif;
+      background-color: #f8f9fa;
       margin: 0;
-      color: #ffffff;
-      display: block;
+      padding: 0;
     }
-
-    /* العنوان الفرعي */
-    .site-subtitle {
-      display: block;
-      font-size: 1.3rem;
-      color: #d8f3ff;
-      margin-top: 6px;
-      font-weight: 500;
-    }
-
-    /* مدخلات البحث */
-    .controls {
+    header {
+      background-color: #007bff;
+      color: white;
       text-align: center;
-      margin: 30px 0;
+      padding: 20px;
+      font-size: 24px;
+      font-weight: bold;
     }
-
-    .controls input, .controls select {
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      margin: 5px;
-      font-size: 1rem;
+    .container {
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 20px;
     }
-
-    .ghost {
-      background: #0077b6;
+    .doctor-card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin-bottom: 15px;
+    }
+    .doctor-card h3 {
+      margin: 0;
+      color: #007bff;
+    }
+    .doctor-card p {
+      margin: 5px 0;
+    }
+    button {
+      background-color: #007bff;
       color: white;
       border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
+      padding: 10px 15px;
+      border-radius: 5px;
       cursor: pointer;
+      transition: 0.3s;
     }
-
-    .ghost:hover {
-      background: #005f8a;
-    }
-
-    footer {
-      background: #f2f2f2;
-      text-align: center;
-      padding: 15px;
-      margin-top: 40px;
-      font-size: 0.9rem;
-    }
-
-    .muted {
-      color: #666;
+    button:hover {
+      background-color: #0056b3;
     }
   </style>
 </head>
-<title>احجز دكتورك | موقع الحجز الإلكتروني للأطباء</title>
-<meta name="description" content="احجز دكتورك بسهولة وسرعة! موقع احجز دكتورك يساعدك على حجز مواعيد الأطباء أونلاين في جميع التخصصات، مع تفاصيل الأسعار والموقع.">
-<meta name="keywords" content="احجز دكتورك, حجز دكتور, أطباء أونلاين, عيادات, حجز مواعيد, طب, مستشفيات">
-<meta name="robots" content="index, follow">
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <!-- اللوجو SVG -->
-      <img src="logo.svg" alt="احجز دكتورك" class="site-logo">
-      <div>
-        <h1 class="site-title">احجز دكتورك</h1>
-        <small class="site-subtitle">Book Your Doctor</small>
-      </div>
-    </div>
-  </header>
+  <header>🩺 احجز دكتورك</header>
 
-  <main class="container">
-    <section class="controls">
-      <input id="searchInput" placeholder="ابحث عن اسم، تخصص أو منطقة... / Search name, specialty or area..." />
-      <select id="specialtyFilter"><option value="">— كل التخصصات —</option></select>
-      <select id="areaFilter"><option value="">— كل المناطق —</option></select>
-      <button id="addDemo" class="ghost" title="add demo">Demo</button>
-    </section>
-
-    <section id="doctorGrid" class="doctor-grid" aria-live="polite"></section>
-  </main>
-
-  <!-- نافذة الحجز -->
-  <div class="modal" id="bookingModal" aria-hidden="true">
-    <div class="modal-overlay"></div>
-    <div class="modal-content">
-      <button class="close-x" id="closeBooking">✕</button>
-      <h2 id="bookingTitle">احجز موعدك</h2>
-
-      <div class="form-row">
-        <input id="patientName" placeholder="اسمك / Name" />
-        <input id="patientPhone" placeholder="رقم الهاتف / Phone" />
-      </div>
-
-      <div class="form-row">
-        <input id="appointmentDate" type="date" />
-        <select id="appointmentTime"></select>
-      </div>
-
-      <div class="form-row">
-        <button id="confirmBookingBtn" class="btn">تأكيد الحجز / Confirm</button>
-        <button id="cancelBooking" class="btn ghost">إلغاء / Cancel</button>
-      </div>
-
-      <div id="bookingNotice" class="muted"></div>
-    </div>
+  <div class="container" id="doctorsContainer">
+    <h2>قائمة الأطباء المتاحين</h2>
+    <div id="doctorsList">جارٍ التحميل...</div>
   </div>
 
-  <footer class="footer">
-    <div>© <span id="year"></span> احجز دكتورك | Book Your Doctor</div>
-    <div class="muted">Offline demo — البيانات محفوظة محليًا</div>
-  </footer>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  <script src="script.js"></script>
-  <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
+    const firebaseConfig = {
+      apiKey: "AIzaSyDgxnMz1IyXQ9hn9VXKJpPGLf75JUNeIYs",
+      authDomain: "doctor-booking-system-336f6.firebaseapp.com",
+      projectId: "doctor-booking-system-336f6",
+      storageBucket: "doctor-booking-system-336f6.firebasestorage.app",
+      messagingSenderId: "996057125969",
+      appId: "1:996057125969:web:332550171352c0950ad470"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const listContainer = document.getElementById("doctorsList");
+
+    async function loadDoctors() {
+      listContainer.innerHTML = "";
+      const querySnapshot = await getDocs(collection(db, "doctors"));
+      if (querySnapshot.empty) {
+        listContainer.innerHTML = "<p>لا يوجد أطباء حاليًا.</p>";
+        return;
+      }
+      querySnapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const div = document.createElement("div");
+        div.className = "doctor-card";
+        div.innerHTML = `
+          <h3>${data.name}</h3>
+          <p><strong>التخصص:</strong> ${data.specialty}</p>
+          <p><strong>السعر:</strong> ${data.price} جنيه</p>
+          <p><strong>📞 رقم الهاتف:</strong> ${data.phone}</p>
+          <p><strong>🗓️ المواعيد:</strong> ${data.days}</p>
+          <p><strong>نبذة:</strong> ${data.description}</p>
+          <button>احجز الآن</button>
+        `;
+        listContainer.appendChild(div);
+      });
+    }
+
+    loadDoctors();
   </script>
 </body>
-
 </html>
