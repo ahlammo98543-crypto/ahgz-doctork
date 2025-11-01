@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>لوحة التحكم - إدارة الدكاترة</title>
+  <title>لوحة التحكم - إدارة الأطباء</title>
   <style>
     body {
       font-family: "Cairo", sans-serif;
@@ -71,13 +71,12 @@
     <button type="submit">إضافة الطبيب</button>
   </form>
 
-  <div class="doctor-list" id="doctorList">
+  <div class="doctor-list">
     <h3>📋 قائمة الأطباء</h3>
     <div id="list"></div>
   </div>
 
   <script type="module">
-    // إعداد Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -85,7 +84,7 @@
       apiKey: "AIzaSyDgxnMz1IyXQ9hn9VXKJpPGLf75JUNeIYs",
       authDomain: "doctor-booking-system-336f6.firebaseapp.com",
       projectId: "doctor-booking-system-336f6",
-      storageBucket: "doctor-booking-system-336f6.firebasestorage.app",
+      storageBucket: "doctor-booking-system-336f6.appspot.com",
       messagingSenderId: "996057125969",
       appId: "1:996057125969:web:332550171352c0950ad470"
     };
@@ -96,15 +95,23 @@
     const form = document.getElementById("doctorForm");
     const listContainer = document.getElementById("list");
 
+    // تحميل الأطباء عند الفتح
+    window.addEventListener("DOMContentLoaded", loadDoctors);
+
     // إضافة طبيب جديد
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const name = form.name.value;
-      const specialty = form.specialty.value;
-      const price = form.price.value;
-      const description = form.description.value;
-      const phone = form.phone.value;
-      const days = form.days.value;
+      const name = document.getElementById("name").value.trim();
+      const specialty = document.getElementById("specialty").value.trim();
+      const price = document.getElementById("price").value.trim();
+      const description = document.getElementById("description").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const days = document.getElementById("days").value.trim();
+
+      if (!name || !specialty || !price || !description || !phone || !days) {
+        alert("من فضلك املأ كل البيانات");
+        return;
+      }
 
       await addDoc(collection(db, "doctors"), {
         name, specialty, price, description, phone, days
@@ -114,7 +121,7 @@
       loadDoctors();
     });
 
-    // تحميل الأطباء
+    // تحميل قائمة الأطباء
     async function loadDoctors() {
       listContainer.innerHTML = "";
       const querySnapshot = await getDocs(collection(db, "doctors"));
@@ -128,19 +135,20 @@
           📞 ${data.phone}<br>
           🗓️ ${data.days}<br>
           📝 ${data.description}<br>
-          <button onclick="deleteDoctor('${docSnap.id}')">🗑️ حذف</button>
+          <button data-id="${docSnap.id}" class="delete-btn">🗑️ حذف</button>
         `;
         listContainer.appendChild(div);
       });
+
+      // تفعيل أزرار الحذف
+      document.querySelectorAll(".delete-btn").forEach((btn) => {
+        btn.addEventListener("click", async (e) => {
+          const id = e.target.dataset.id;
+          await deleteDoc(doc(db, "doctors", id));
+          loadDoctors();
+        });
+      });
     }
-
-    // حذف طبيب
-    window.deleteDoctor = async (id) => {
-      await deleteDoc(doc(db, "doctors", id));
-      loadDoctors();
-    };
-
-    loadDoctors();
   </script>
 </body>
 </html>
