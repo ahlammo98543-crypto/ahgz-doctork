@@ -1,42 +1,47 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>احجز دكتورك</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>احجز دكتورك الآن</title>
   <style>
     body {
       font-family: "Cairo", sans-serif;
-      background-color: #f8f9fa;
+      background-color: #f0f4f8;
       margin: 0;
       padding: 0;
+      text-align: center;
     }
     header {
       background-color: #007bff;
       color: white;
-      text-align: center;
-      padding: 20px;
+      padding: 20px 0;
       font-size: 24px;
       font-weight: bold;
     }
     .container {
-      max-width: 1000px;
+      max-width: 900px;
       margin: 30px auto;
-      padding: 20px;
-    }
-    .doctor-card {
       background: white;
       padding: 20px;
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      margin-bottom: 15px;
     }
-    .doctor-card h3 {
-      margin: 0;
+    .doctor-card {
+      border-bottom: 1px solid #eee;
+      padding: 15px 10px;
+      text-align: right;
+    }
+    .doctor-card:last-child {
+      border-bottom: none;
+    }
+    h2 {
       color: #007bff;
+      margin-bottom: 5px;
     }
-    .doctor-card p {
-      margin: 5px 0;
+    .price {
+      color: green;
+      font-weight: bold;
     }
     button {
       background-color: #007bff;
@@ -53,14 +58,16 @@
   </style>
 </head>
 <body>
-  <header>🩺 احجز دكتورك</header>
+
+  <header>💙 احجز دكتورك الآن</header>
 
   <div class="container" id="doctorsContainer">
-    <h2>قائمة الأطباء المتاحين</h2>
-    <div id="doctorsList">جارٍ التحميل...</div>
+    <h1>قائمة الأطباء المتاحين</h1>
+    <div id="doctorList">جاري التحميل...</div>
   </div>
 
   <script type="module">
+    // Firebase setup
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -75,31 +82,30 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-
-    const listContainer = document.getElementById("doctorsList");
+    const doctorList = document.getElementById("doctorList");
 
     async function loadDoctors() {
-      listContainer.innerHTML = "";
+      doctorList.innerHTML = "";
       const querySnapshot = await getDocs(collection(db, "doctors"));
       if (querySnapshot.empty) {
-        listContainer.innerHTML = "<p>لا يوجد أطباء حاليًا.</p>";
-        return;
+        doctorList.innerHTML = "<p>لا يوجد أطباء حالياً.</p>";
+      } else {
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const div = document.createElement("div");
+          div.className = "doctor-card";
+          div.innerHTML = `
+            <h2>${data.name}</h2>
+            <p><strong>التخصص:</strong> ${data.specialty}</p>
+            <p class="price">💰 ${data.price} جنيه</p>
+            <p><strong>📞 الهاتف:</strong> ${data.phone}</p>
+            <p><strong>🗓️ الأيام:</strong> ${data.days}</p>
+            <p><strong>📝 نبذة:</strong> ${data.description}</p>
+            <button>احجز الآن</button>
+          `;
+          doctorList.appendChild(div);
+        });
       }
-      querySnapshot.forEach((docSnap) => {
-        const data = docSnap.data();
-        const div = document.createElement("div");
-        div.className = "doctor-card";
-        div.innerHTML = `
-          <h3>${data.name}</h3>
-          <p><strong>التخصص:</strong> ${data.specialty}</p>
-          <p><strong>السعر:</strong> ${data.price} جنيه</p>
-          <p><strong>📞 رقم الهاتف:</strong> ${data.phone}</p>
-          <p><strong>🗓️ المواعيد:</strong> ${data.days}</p>
-          <p><strong>نبذة:</strong> ${data.description}</p>
-          <button>احجز الآن</button>
-        `;
-        listContainer.appendChild(div);
-      });
     }
 
     loadDoctors();
