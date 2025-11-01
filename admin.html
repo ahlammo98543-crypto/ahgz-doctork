@@ -17,11 +17,12 @@
     .card{background:#fff;padding:14px;border-radius:12px;box-shadow:0 10px 30px rgba(11,82,150,0.06)}
     .form-row{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap}
     input[type="text"], input[type="number"]{padding:8px;border-radius:8px;border:1px solid #e6eefc;flex:1}
+    table{width:100%;border-collapse:collapse;margin-top:8px}
+    table th, table td{padding:8px;border-bottom:1px solid #f1f5f9;text-align:right}
     .muted{color:#667085;font-size:13px}
   </style>
 </head>
 <body>
-  <!-- شاشة تسجيل الدخول -->
   <div class="login-screen" id="loginScreen">
     <h2>🔒 دخول لوحة الإدارة</h2>
     <input type="password" id="adminPassword" placeholder="أدخل كلمة المرور">
@@ -29,7 +30,6 @@
     <p id="loginError" style="color:yellow;margin-top:10px"></p>
   </div>
 
-  <!-- لوحة الإدارة -->
   <div id="adminPanel" style="display:none;">
     <header class="topbar">
       <h1>لوحة الإدارة</h1>
@@ -52,7 +52,7 @@
 
         <div class="form-row">
           <input id="docImg" placeholder="رابط الصورة (اختياري)">
-          <input id="docSchedule" placeholder="المواعيد (مثال: 09:00,10:00)">
+          <input id="docSchedule" placeholder="المواعيد (مثال: الأحد والثلاثاء 5-9)">
         </div>
 
         <div class="form-row">
@@ -63,7 +63,7 @@
 
       <section class="card admin-card">
         <h3>قائمة الأطباء</h3>
-        <div id="doctorsList"></div>
+        <div id="doctorsList" class="list"></div>
       </section>
     </main>
 
@@ -72,7 +72,7 @@
     </footer>
   </div>
 
-  <!-- سكريبت تسجيل الدخول -->
+  <!-- 🔒 كود الدخول -->
   <script>
     const correctPassword = "Ahlammohamed2003";
     const loginScreen = document.getElementById("loginScreen");
@@ -88,7 +88,8 @@
     }
 
     loginBtn.addEventListener("click", () => {
-      if (passwordInput.value.trim() === correctPassword) {
+      const enteredPassword = passwordInput.value.trim();
+      if (enteredPassword === correctPassword) {
         localStorage.setItem("adminLoggedIn", "true");
         loginScreen.style.display = "none";
         adminPanel.style.display = "block";
@@ -105,7 +106,7 @@
     document.getElementById("yearAdmin").textContent = new Date().getFullYear();
   </script>
 
-  <!-- 🔥 ربط فايربيس -->
+  <!-- 🔥 ربط Firebase + تخزين الأطباء -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
@@ -116,54 +117,64 @@
       projectId: "doctor-booking-system-336f6",
       storageBucket: "doctor-booking-system-336f6.firebasestorage.app",
       messagingSenderId: "996057125969",
-      appId: "1:996057125969:web:56691f690dde716d0ad470",
-      measurementId: "G-DVWG04KC1X"
+      appId: "1:996057125969:web:56691f690dde716d0ad470"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
     const saveBtn = document.getElementById("saveDoctor");
-    const list = document.getElementById("doctorsList");
+    const listDiv = document.getElementById("doctorsList");
 
-    // حفظ دكتور جديد
-    saveBtn.addEventListener("click", async () => {
-      const docData = {
-        name: document.getElementById("docName").value,
-        specialty: document.getElementById("docSpecialty").value,
-        area: document.getElementById("docArea").value,
-        price: document.getElementById("docPrice").value,
-        img: document.getElementById("docImg").value,
-        schedule: document.getElementById("docSchedule").value
-      };
-      await addDoc(collection(db, "doctors"), docData);
-      alert("✅ تم حفظ الدكتور بنجاح!");
+    // 🩵 حفظ الطبيب
+    async function saveDoctor() {
+      const name = document.getElementById("docName").value.trim();
+      const specialty = document.getElementById("docSpecialty").value.trim();
+      const area = document.getElementById("docArea").value.trim();
+      const price = document.getElementById("docPrice").value.trim();
+      const img = document.getElementById("docImg").value.trim();
+      const schedule = document.getElementById("docSchedule").value.trim();
+
+      if (!name || !specialty || !area) {
+        alert("⚠️ من فضلك أدخل الاسم والتخصص والمنطقة على الأقل.");
+        return;
+      }
+
+      await addDoc(collection(db, "doctors"), { name, specialty, area, price, img, schedule });
+
+      alert("✅ تم حفظ الطبيب بنجاح!");
       loadDoctors();
-    });
+    }
 
-    // تحميل الأطباء
+    // 🩵 عرض الأطباء
     async function loadDoctors() {
-      list.innerHTML = "";
+      listDiv.innerHTML = "";
       const querySnapshot = await getDocs(collection(db, "doctors"));
       querySnapshot.forEach((d) => {
         const data = d.data();
-        const div = document.createElement("div");
-        div.innerHTML = `
-          <div class="item">
-            <div>${data.name} — ${data.specialty} — ${data.area}</div>
-            <button data-id="${d.id}" class="delBtn">🗑 حذف</button>
-          </div>`;
-        list.appendChild(div);
+        const card = document.createElement("div");
+        card.innerHTML = `
+          <div style="background:#fff;padding:10px;border-radius:8px;margin-bottom:10px">
+            <strong>${data.name}</strong> — ${data.specialty} (${data.area})<br>
+            <small>💰 ${data.price || "-"} | 🕒 ${data.schedule || "-"}</small><br>
+            <button data-id="${d.id}" class="delete-btn">🗑 حذف</button>
+          </div>
+        `;
+        listDiv.appendChild(card);
       });
 
-      document.querySelectorAll(".delBtn").forEach(btn => {
-        btn.addEventListener("click", async () => {
-          await deleteDoc(doc(db, "doctors", btn.dataset.id));
-          loadDoctors();
+      document.querySelectorAll(".delete-btn").forEach(btn => {
+        btn.addEventListener("click", async (e) => {
+          const id = e.target.dataset.id;
+          if (confirm("هل أنت متأكد من حذف هذا الطبيب؟")) {
+            await deleteDoc(doc(db, "doctors", id));
+            loadDoctors();
+          }
         });
       });
     }
 
+    saveBtn.addEventListener("click", saveDoctor);
     loadDoctors();
   </script>
 </body>
