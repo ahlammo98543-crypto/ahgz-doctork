@@ -1,1 +1,90 @@
-[]
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تفاصيل الطبيب</title>
+  <style>
+    body {
+      font-family: "Cairo", sans-serif;
+      background-color: #f7f9fc;
+      text-align: right;
+      padding: 20px;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #007bff;
+    }
+    .price { color: green; font-weight: bold; }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="doctorDetails">جاري التحميل...</div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDgxnMz1IyXQ9hn9VXKJpPGLf75JUNeIYs",
+      authDomain: "doctor-booking-system-336f6.firebaseapp.com",
+      projectId: "doctor-booking-system-336f6",
+      storageBucket: "doctor-booking-system-336f6.firebasestorage.app",
+      messagingSenderId: "996057125969",
+      appId: "1:996057125969:web:332550171352c0950ad470"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const params = new URLSearchParams(window.location.search);
+    const doctorId = params.get("id");
+    const container = document.getElementById("doctorDetails");
+
+    async function loadDoctor() {
+      if (!doctorId) {
+        container.innerHTML = "<p>حدث خطأ: لم يتم العثور على الطبيب.</p>";
+        return;
+      }
+
+      const docRef = doc(db, "doctors", doctorId);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        container.innerHTML = `
+          <h1>${data.name}</h1>
+          <p><strong>التخصص:</strong> ${data.specialty}</p>
+          <p class="price">💰 ${data.price} جنيه</p>
+          <p><strong>📞 الهاتف:</strong> ${data.phone}</p>
+          <p><strong>🗓️ الأيام:</strong> ${data.days}</p>
+          <p><strong>📝 نبذة:</strong> ${data.description}</p>
+          <button onclick="window.location.href='index.html'">⬅️ العودة للقائمة</button>
+        `;
+      } else {
+        container.innerHTML = "<p>لم يتم العثور على الطبيب.</p>";
+      }
+    }
+
+    loadDoctor();
+  </script>
+</body>
+</html>
