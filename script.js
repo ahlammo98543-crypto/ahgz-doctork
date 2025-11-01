@@ -1,3 +1,33 @@
+<!-- Firebase App (الملف الرئيسي) -->
+<script type="module">
+  // Import the Firebase SDKs
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+  // كود التكوين الخاص بمشروعك (firebaseConfig)
+  const firebaseConfig = {
+    apiKey: "اكتبي هنا ال-apiKey بتاعك",
+    authDomain: "اكتبي هنا ال-authDomain",
+    projectId: "اكتبي هنا ال-projectId",
+    storageBucket: "اكتبي هنا ال-storageBucket",
+    messagingSenderId: "اكتبي هنا ال-messagingSenderId",
+    appId: "اكتبي هنا ال-appId"
+  };
+
+  // تشغيل فايربيس
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // مثال لقراءة بيانات الأطباء
+  async function loadDoctors() {
+    const querySnapshot = await getDocs(collection(db, "doctors"));
+    querySnapshot.forEach((doc) => {
+      console.log(doc.id, " => ", doc.data());
+    });
+  }
+
+  loadDoctors();
+</script>
 // script.js — works for both pages (index & admin)
 (() => {
   const isAdminPage = location.pathname.endsWith('admin.html') || location.search.includes('admin=true');
@@ -380,3 +410,4 @@
   }
 
 })();
+
