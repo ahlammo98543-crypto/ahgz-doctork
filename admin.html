@@ -1,154 +1,116 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>لوحة التحكم - إدارة الأطباء</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>لوحة الإدارة — Admin</title>
+  <link rel="stylesheet" href="style.css">
   <style>
-    body {
-      font-family: "Cairo", sans-serif;
-      background-color: #f8f9fa;
-      direction: rtl;
-      padding: 20px;
-    }
-    h1 {
-      text-align: center;
-      color: #007bff;
-    }
-    form {
-      background-color: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      max-width: 600px;
-      margin: 20px auto;
-    }
-    input, textarea, button {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-    }
-    button {
-      background-color: #007bff;
-      color: white;
-      border: none;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
-    .doctor-list {
-      max-width: 700px;
-      margin: 20px auto;
-      background: white;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    .doctor-item {
-      border-bottom: 1px solid #eee;
-      padding: 10px 0;
-    }
-    .doctor-item:last-child {
-      border-bottom: none;
-    }
+    body { font-family: "Cairo", sans-serif; background-color: #f5f7fa; margin:0; color:#222; }
+    .login-screen { display:flex; justify-content:center; align-items:center; height:100vh; flex-direction:column; background:linear-gradient(135deg,#007bff,#004aad); color:white; text-align:center; }
+    .login-screen input { padding:10px; border-radius:8px; width:260px; margin-top:12px; }
+    .login-screen button { background:white; color:#004aad; padding:10px 18px; border-radius:8px; margin-top:12px; border:none; font-weight:700; cursor:pointer; }
+    .topbar { background:#004aad; color:white; display:flex; justify-content:space-between; align-items:center; padding:15px 20px; }
+    .topbar .logout { background:white; color:#004aad; padding:8px 14px; border-radius:8px; border:none; cursor:pointer; font-weight:700; }
+    .container{max-width:1100px;margin:20px auto;padding:0 16px}
+    .admin-grid{display:grid;grid-template-columns:1fr;gap:16px}
+    .card{background:#fff;padding:14px;border-radius:12px;box-shadow:0 10px 30px rgba(11,82,150,0.06)}
+    .form-row{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+    input[type="text"], input[type="number"]{padding:8px;border-radius:8px;border:1px solid #e6eefc;flex:1}
+    table{width:100%;border-collapse:collapse;margin-top:8px}
+    table th, table td{padding:8px;border-bottom:1px solid #f1f5f9;text-align:right}
+    .muted{color:#667085;font-size:13px}
   </style>
 </head>
 <body>
-  <h1>🩺 إدارة الأطباء</h1>
-
-  <form id="doctorForm">
-    <input type="text" id="name" placeholder="اسم الطبيب" required />
-    <input type="text" id="specialty" placeholder="تخصص الطبيب" required />
-    <input type="number" id="price" placeholder="سعر الكشف" required />
-    <textarea id="description" placeholder="نبذة عن الطبيب" required></textarea>
-    <input type="tel" id="phone" placeholder="رقم الهاتف" required />
-    <input type="text" id="days" placeholder="أيام العمل (مثلاً: السبت - الاثنين - الأربعاء)" required />
-    <button type="submit">إضافة الطبيب</button>
-  </form>
-
-  <div class="doctor-list">
-    <h3>📋 قائمة الأطباء</h3>
-    <div id="list"></div>
+  <div class="login-screen" id="loginScreen">
+    <h2>🔒 دخول لوحة الإدارة</h2>
+    <input type="password" id="adminPassword" placeholder="أدخل كلمة المرور">
+    <button id="loginBtn">دخول</button>
+    <p id="loginError" style="color:yellow;margin-top:10px"></p>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  <div id="adminPanel" style="display:none;">
+    <header class="topbar">
+      <h1>لوحة الإدارة</h1>
+      <button class="logout" id="logoutBtn">تسجيل الخروج</button>
+    </header>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyDgxnMz1IyXQ9hn9VXKJpPGLf75JUNeIYs",
-      authDomain: "doctor-booking-system-336f6.firebaseapp.com",
-      projectId: "doctor-booking-system-336f6",
-      storageBucket: "doctor-booking-system-336f6.appspot.com",
-      messagingSenderId: "996057125969",
-      appId: "1:996057125969:web:332550171352c0950ad470"
-    };
+    <main class="container admin-grid">
+      <section class="card admin-card">
+        <h3>إضافة / تعديل طبيب</h3>
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+        <div class="form-row">
+          <input id="docName" placeholder="اسم الدكتور">
+          <input id="docSpecialty" placeholder="التخصص">
+        </div>
 
-    const form = document.getElementById("doctorForm");
-    const listContainer = document.getElementById("list");
+        <div class="form-row">
+          <input id="docArea" placeholder="المنطقة / العنوان">
+          <input id="docPrice" type="number" placeholder="سعر الكشف">
+        </div>
 
-    // تحميل الأطباء عند الفتح
-    window.addEventListener("DOMContentLoaded", loadDoctors);
+        <div class="form-row">
+          <input id="docImg" placeholder="رابط الصورة (اختياري)">
+          <input id="docSchedule" placeholder="المواعيد (مثال: 09:00,10:00 أو: الأحد والثلاثاء 5-9)">
+        </div>
 
-    // إضافة طبيب جديد
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const name = document.getElementById("name").value.trim();
-      const specialty = document.getElementById("specialty").value.trim();
-      const price = document.getElementById("price").value.trim();
-      const description = document.getElementById("description").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-      const days = document.getElementById("days").value.trim();
+        <div class="form-row">
+          <button id="saveDoctor" class="btn">💾 حفظ</button>
+          <button id="clearForm" class="btn ghost">🧹 مسح</button>
+        </div>
+      </section>
 
-      if (!name || !specialty || !price || !description || !phone || !days) {
-        alert("من فضلك املأ كل البيانات");
-        return;
+      <section class="card admin-card">
+        <h3>قائمة الأطباء</h3>
+        <div id="doctorsList" class="list"></div>
+      </section>
+
+      <section class="card admin-card">
+        <h3>حجوزات المرضى</h3>
+        <div id="bookingsList" class="list"></div>
+        <div class="muted">البيانات محفوظة محليًا (localStorage).</div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      © <span id="yearAdmin"></span> Admin
+    </footer>
+  </div>
+
+  <script>
+    const correctPassword = "Ahlammohamed2003";
+    const loginScreen = document.getElementById("loginScreen");
+    const adminPanel = document.getElementById("adminPanel");
+    const loginBtn = document.getElementById("loginBtn");
+    const passwordInput = document.getElementById("adminPassword");
+    const errorMsg = document.getElementById("loginError");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    if (localStorage.getItem("adminLoggedIn") === "true") {
+      loginScreen.style.display = "none";
+      adminPanel.style.display = "block";
+    }
+
+    loginBtn.addEventListener("click", () => {
+      const enteredPassword = passwordInput.value.trim();
+      if (enteredPassword === correctPassword) {
+        localStorage.setItem("adminLoggedIn", "true");
+        loginScreen.style.display = "none";
+        adminPanel.style.display = "block";
+      } else {
+        errorMsg.textContent = "❌ كلمة المرور غير صحيحة";
       }
-
-      await addDoc(collection(db, "doctors"), {
-        name, specialty, price, description, phone, days
-      });
-
-      form.reset();
-      loadDoctors();
     });
 
-    // تحميل قائمة الأطباء
-    async function loadDoctors() {
-      listContainer.innerHTML = "";
-      const querySnapshot = await getDocs(collection(db, "doctors"));
-      querySnapshot.forEach((docSnap) => {
-        const data = docSnap.data();
-        const div = document.createElement("div");
-        div.className = "doctor-item";
-        div.innerHTML = `
-          <strong>${data.name}</strong> - ${data.specialty}<br>
-          💵 ${data.price} جنيه<br>
-          📞 ${data.phone}<br>
-          🗓️ ${data.days}<br>
-          📝 ${data.description}<br>
-          <button data-id="${docSnap.id}" class="delete-btn">🗑️ حذف</button>
-        `;
-        listContainer.appendChild(div);
-      });
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem("adminLoggedIn");
+      location.reload();
+    });
 
-      // تفعيل أزرار الحذف
-      document.querySelectorAll(".delete-btn").forEach((btn) => {
-        btn.addEventListener("click", async (e) => {
-          const id = e.target.dataset.id;
-          await deleteDoc(doc(db, "doctors", id));
-          loadDoctors();
-        });
-      });
-    }
+    document.getElementById("yearAdmin").textContent = new Date().getFullYear();
   </script>
+
+  <script src="script.js"></script>
 </body>
 </html>
