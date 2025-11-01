@@ -67,7 +67,6 @@
   </div>
 
   <script type="module">
-    // Firebase setup
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -98,10 +97,7 @@
             <h2>${data.name}</h2>
             <p><strong>التخصص:</strong> ${data.specialty}</p>
             <p class="price">💰 ${data.price} جنيه</p>
-            <p><strong>📞 الهاتف:</strong> ${data.phone}</p>
-            <p><strong>🗓️ الأيام:</strong> ${data.days}</p>
-            <p><strong>📝 نبذة:</strong> ${data.description}</p>
-            <button>احجز الآن</button>
+            <button onclick="window.location.href='doctor.html?id=${doc.id}'">عرض التفاصيل</button>
           `;
           doctorList.appendChild(div);
         });
