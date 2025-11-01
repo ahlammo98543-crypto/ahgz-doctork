@@ -168,7 +168,34 @@ const analytics = getAnalytics(app);
   <script src="script.js"></script>
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
-  </script>
+</script>
+  <!-- Firebase App (الملف الرئيسي) -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "اكتبي هنا ال-apiKey بتاعك",
+    authDomain: "اكتبي هنا ال-authDomain",
+    projectId: "اكتبي هنا ال-projectId",
+    storageBucket: "اكتبي هنا ال-storageBucket",
+    messagingSenderId: "اكتبي هنا ال-messagingSenderId",
+    appId: "اكتبي هنا ال-appId"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  async function loadDoctors() {
+    const querySnapshot = await getDocs(collection(db, "doctors"));
+    querySnapshot.forEach((doc) => {
+      console.log(doc.id, " => ", doc.data());
+    });
+  }
+
+  loadDoctors();
+</script>
 </body>
 </html>
+
 
