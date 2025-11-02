@@ -1,241 +1,45 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>احجز دكتورك – Book Your Doctor</title>
-  <meta name="description" content="موقع احجز دكتورك يساعدك على العثور على أفضل الأطباء بسهولة وحجز المواعيد أونلاين.">
-  <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
-  <style>
-    /* تنسيق شريط العنوان */
-    .topbar {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #0077b6;
-      color: #fff;
-      padding: 25px 20px;
-      border-bottom: 4px solid #005f8a;
-    }
-
-    /* تنسيق المنطقة اللي فيها اللوجو والعناوين */
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-    }
-
-    /* اللوجو SVG */
-    .site-logo {
-      width: 90px;
-      height: auto;
-    }
-
-    /* العنوان الرئيسي */
-    .site-title {
-      font-size: 3rem;
-      font-weight: 800;
-      margin: 0;
-      color: #ffffff;
-      display: block;
-    }
-
-    /* العنوان الفرعي */
-    .site-subtitle {
-      display: block;
-      font-size: 1.3rem;
-      color: #d8f3ff;
-      margin-top: 6px;
-      font-weight: 500;
-    }
-
-    /* مدخلات البحث */
-    .controls {
-      text-align: center;
-      margin: 30px 0;
-    }
-
-    .controls input, .controls select {
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      margin: 5px;
-      font-size: 1rem;
-    }
-
-    .ghost {
-      background: #0077b6;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    .ghost:hover {
-      background: #005f8a;
-    }
-
-    footer {
-      background: #f2f2f2;
-      text-align: center;
-      padding: 15px;
-      margin-top: 40px;
-      font-size: 0.9rem;
-    }
-
-    .muted {
-      color: #666;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>قائمة الأطباء</title>
 </head>
-
 <body>
-  <header class="topbar">
-    <div class="brand">
-      <!-- اللوجو SVG -->
-      <img src="logo.svg" alt="احجز دكتورك" class="site-logo">
-      <div>
-        <h1 class="site-title">احجز دكتورك</h1>
-        <small class="site-subtitle">Book Your Doctor</small>
-      </div>
-    </div>
-  </header>
+  <h1>الأطباء المتاحون</h1>
+  <div id="doctorList"></div>
 
-  <main class="container">
-    <section class="controls">
-      <input id="searchInput" placeholder="ابحث عن اسم، تخصص أو منطقة... / Search name, specialty or area..." />
-      <select id="specialtyFilter"><option value="">— كل التخصصات —</option></select>
-      <select id="areaFilter"><option value="">— كل المناطق —</option></select>
-      <button id="addDemo" class="ghost" title="add demo">Demo</button>
-    </section>
-
-    <section id="doctorGrid" class="doctor-grid" aria-live="polite"></section>
-  </main>
-
-  <!-- نافذة الحجز -->
-  <div class="modal" id="bookingModal" aria-hidden="true">
-    <div class="modal-overlay"></div>
-    <div class="modal-content">
-      <button class="close-x" id="closeBooking">✕</button>
-      <h2 id="bookingTitle">احجز موعدك</h2>
-
-      <div class="form-row">
-        <input id="patientName" placeholder="اسمك / Name" />
-        <input id="patientPhone" placeholder="رقم الهاتف / Phone" />
-      </div>
-
-      <div class="form-row">
-        <input id="appointmentDate" type="date" />
-        <select id="appointmentTime"></select>
-      </div>
-
-      <div class="form-row">
-        <button id="confirmBookingBtn" class="btn">تأكيد الحجز / Confirm</button>
-        <button id="cancelBooking" class="btn ghost">إلغاء / Cancel</button>
-      </div>
-
-      <div id="bookingNotice" class="muted"></div>
-    </div>
-  </div>
-
-  <footer class="footer">
-    <div>© <span id="year"></span> احجز دكتورك | Book Your Doctor</div>
-    <div class="muted">Offline demo — البيانات محفوظة محليًا</div>
-  </footer>
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyDgxnMz1IyXQ9hn9VXKJpPGLf75JUNeIYs",
-  authDomain: "doctor-booking-system-336f6.firebaseapp.com",
-  projectId: "doctor-booking-system-336f6",
-  storageBucket: "doctor-booking-system-336f6.firebasestorage.app",
-  messagingSenderId: "996057125969",
-  appId: "1:996057125969:web:56691f690dde716d0ad470",
-  measurementId: "G-DVWG04KC1X"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-  <script src="script.js"></script>
-  <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
-</script>
-  <!-- Firebase App (الملف الرئيسي) -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "اكتبي هنا ال-apiKey بتاعك",
-    authDomain: "اكتبي هنا ال-authDomain",
-    projectId: "اكتبي هنا ال-projectId",
-    storageBucket: "اكتبي هنا ال-storageBucket",
-    messagingSenderId: "اكتبي هنا ال-messagingSenderId",
-    appId: "اكتبي هنا ال-appId"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  async function loadDoctors() {
-    const querySnapshot = await getDocs(collection(db, "doctors"));
-    querySnapshot.forEach((doc) => {
-      console.log(doc.id, " => ", doc.data());
-    });
-  }
-
-  loadDoctors();
-</script>
-  <script type="module" src="script.js"></script>
   <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyDgxnMz1IyXQ9hn9VXKJpPGLf75JUNeIYs",
-    authDomain: "doctor-booking-system-336f6.firebaseapp.com",
-    projectId: "doctor-booking-system-336f6",
-    storageBucket: "doctor-booking-system-336f6.firebasestorage.app",
-    messagingSenderId: "996057125969",
-    appId: "1:996057125969:web:56691f690dde716d0ad470"
-  };
+    const firebaseConfig = {
+      apiKey: "AIzaSyDgxnMz1IyXQ9hn9VXKJpPGLf75JUNeIYs",
+      authDomain: "doctor-booking-system-336f6.firebaseapp.com",
+      projectId: "doctor-booking-system-336f6",
+      storageBucket: "doctor-booking-system-336f6.firebasestorage.app",
+      messagingSenderId: "996057125969",
+      appId: "1:996057125969:web:56691f690dde716d0ad470",
+      measurementId: "G-DVWG04KC1X"
+    };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-  async function loadDoctors() {
-    const grid = document.querySelector(".doctor-grid");
-    grid.innerHTML = "";
-    const querySnapshot = await getDocs(collection(db, "doctors"));
-    querySnapshot.forEach((docSnap) => {
-      const d = docSnap.data();
-      const card = document.createElement("div");
-      card.className = "card";
-      card.innerHTML = `
-        <img src="${d.img || 'https://via.placeholder.com/300x160'}" class="doc-img">
-        <h3>${d.name}</h3>
-        <p>${d.specialty}</p>
-        <p>${d.area}</p>
-        <p>💰 ${d.price} جنيه</p>
-      `;
-      grid.appendChild(card);
-    });
-  }
+    async function loadDoctors() {
+      const doctorList = document.getElementById("doctorList");
+      doctorList.innerHTML = "";
 
-  loadDoctors();
-</script>
+      const querySnapshot = await getDocs(collection(db, "doctors"));
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const div = document.createElement("div");
+        div.innerHTML = `<h3>${data.name}</h3><p>${data.specialty}</p><p>${data.phone}</p><hr>`;
+        doctorList.appendChild(div);
+      });
+    }
+
+    loadDoctors();
+  </script>
 </body>
 </html>
-
-
-
-
